@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 public class BehaviorController : MonoBehaviour
 {
@@ -10,15 +11,12 @@ public class BehaviorController : MonoBehaviour
 
     public Transform[] points;
     private int destPoint = 0;
+    private int prevDest = 0;
     private NavMeshAgent agent;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-            /*Disabling auto-braking allows for continuous movement
-              between points (ie, the agent doesn't slow down as it
-              approaches a destination point).*/
-        agent.autoBraking = false;
     }
 
     void Update()
@@ -33,18 +31,24 @@ public class BehaviorController : MonoBehaviour
 
     void GoToNextPoint()
     {
+
         if (points.Length == 0)
         {
             return;
         }
 
-            //Set the agent to go to the currently selected destination.
-        agent.destination = points[destPoint].position;
+        //Set the agent to go to the currently selected destination.
+        StartCoroutine(wait());
+        agent.destination = points[RandomNode()].position;
+    }
 
-        /*Choose the next point in the array as the destination,
-          cycling to the start if necessary.*/
-        destPoint = (destPoint + 1) % points.Length;
+    int RandomNode()
+    {
+        return Random.Range(0, points.Length);
+    }
 
-
+    IEnumerator wait()
+    {
+        yield return new WaitForSeconds(10);
     }
 }
