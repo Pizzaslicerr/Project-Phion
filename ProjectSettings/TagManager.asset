@@ -6,8 +6,6 @@ TagManager:
   tags:
   - Enemy
   - Wall
-  - Hideable
-  - player
   layers:
   - Default
   - TransparentFX

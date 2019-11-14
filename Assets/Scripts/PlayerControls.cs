@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-public class playerController : MonoBehaviour
+public class PlayerControls : MonoBehaviour
 {
     [Header("stats")]
     public float attackDistance;
