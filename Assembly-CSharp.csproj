@@ -69,9 +69,10 @@
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUI.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUnityVersion.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUtils.cs" />
+    <Compile Include="Assets\Hideable.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\PlayerControls.cs" />
-    <Compile Include="Assets\Scripts\WallTrasparency.cs" />
+    <Compile Include="Assets\ShowBehindWalls.cs" />
     <None Include="Assets\Demigiant\DOTween\readme.txt" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/TeemuPal3/Documents/GitRepos/Project-Phion/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>

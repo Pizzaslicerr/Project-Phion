@@ -9,7 +9,7 @@ public class PlayerControls : MonoBehaviour
     private float nextAttack;
 
     private NavMeshAgent navMeshAgent;
-    private Animator anim;
+    
 
     private Transform targetedEnemy;
     private bool enemyClicked;
@@ -17,7 +17,7 @@ public class PlayerControls : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        anim = GetComponent<Animator>();
+        
         navMeshAgent = GetComponent<NavMeshAgent>();
     }
 
@@ -57,7 +57,7 @@ public class PlayerControls : MonoBehaviour
         {
             walking = true;
         }
-        anim.SetBool("IsWalking", walking);
+       
     }
 
     void MoveAndAttack()
