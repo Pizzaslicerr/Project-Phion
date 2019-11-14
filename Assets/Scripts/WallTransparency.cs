@@ -5,6 +5,7 @@ using UnityEngine;
 public class WallTransparency : MonoBehaviour
 {
     Renderer renderer;
+    Renderer lastRenderer;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +25,15 @@ public class WallTransparency : MonoBehaviour
             {
                 renderer = hit.transform.GetComponent<Renderer>();
                 renderer.enabled = false;
+                if(lastRenderer == null)
+                {
+                    lastRenderer = renderer;
+                }
+                if (renderer != lastRenderer)
+                {
+                    lastRenderer.enabled = true;
+                    lastRenderer = renderer;
+                }
             }
             else
             {
