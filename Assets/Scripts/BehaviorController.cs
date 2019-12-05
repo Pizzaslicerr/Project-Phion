@@ -13,14 +13,16 @@ public class BehaviorController : MonoBehaviour
     public float minWait;
     public float maxWait;
 
+    [Header("Debug")]
+    public Transform debugDestination;
+    public int debugNodesUntilWait;
+
     public Transform[] points;
     private NavMeshAgent agent;
     private int nodesUntilWait;
-
+    public GameObject player;
 
     private int RNG = 1;
-    public Transform debugDestination;
-    public int debugNodesUntilWait;
 
     void Start()
     {
@@ -32,12 +34,21 @@ public class BehaviorController : MonoBehaviour
     {
         debugNodesUntilWait = nodesUntilWait + 1;
 
+        Vector3 playerDirection = player.transform.position - transform.position;
+        Debug.DrawRay(transform.position, playerDirection, Color.green);
+        
+        if (playerDirection.sqrMagnitude > 100f)
+        {
+            Debug.DrawRay(transform.position, Vector3.up * 10, Color.red);
+        }
+
         /*Choose the next destination point when the agent gets
           close to the current one.*/
         if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {
             GoToNextPoint();
         }
+
     }
 
     void GoToNextPoint()
