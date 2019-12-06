@@ -16,11 +16,14 @@ public class BehaviorController : MonoBehaviour
     [Header("Debug")]
     public Transform debugDestination;
     public int debugNodesUntilWait;
+    public float debugAgentSpeed;
 
     public Transform[] points;
+    public GameObject lastPosition;
     private NavMeshAgent agent;
     private int nodesUntilWait;
     public GameObject player;
+    private bool isVisible = false;
 
     private int RNG = 1;
 
@@ -32,40 +35,80 @@ public class BehaviorController : MonoBehaviour
 
     void Update()
     {
+        int layerMask = 1 << 8;
+        layerMask = ~layerMask;
+
         debugNodesUntilWait = nodesUntilWait + 1;
+        debugAgentSpeed = agent.speed;
 
         Vector3 playerDirection = player.transform.position - transform.position;
         Debug.DrawRay(transform.position, playerDirection, Color.green);
+        Debug.DrawRay(lastPosition.transform.position, new Vector3(0, 10, 0.5f), Color.yellow);
         
-        if (playerDirection.sqrMagnitude > 100f)
+        if (playerDirection.sqrMagnitude < 100f && !Physics.Linecast(transform.position, player.transform.position, layerMask))
         {
+            lastPosition.transform.position = player.transform.position;
             Debug.DrawRay(transform.position, Vector3.up * 10, Color.red);
+            agent.speed = 5f;
+            GoToNextPoint("player");
+            isVisible = true;
         }
+
+        if (isVisible)
+        {
+            if (playerDirection.sqrMagnitude > 100f || Physics.Linecast(transform.position, player.transform.position, layerMask))
+            {
+                agent.speed = 3.5f;
+                isVisible = false;
+                GoToNextPoint("lostPlayer");
+            }
+        }
+        
 
         /*Choose the next destination point when the agent gets
           close to the current one.*/
         if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {
-            GoToNextPoint();
+            GoToNextPoint("node");
         }
 
     }
 
-    void GoToNextPoint()
+    void GoToNextPoint(string target)
     {
-        //If no nodes, AI doesn't move.
-        if (points.Length == 0)
+        switch(target)
         {
-            return;
-        }
+            case "node":
+                //If no nodes, AI doesn't move.
+                if (points.Length == 0)
+                {
+                    return;
+                }
 
-        /*Checks if it's time to stop, then randomly selects next destination.*/
-        if (nodesUntilWait == 0)
-        {
-            StartCoroutine(Wait());
-        }
+                /*Checks if it's time to stop, then randomly selects next destination.*/
+                if (nodesUntilWait == 0)
+                {
+                    
+                }
+                NextNode();
 
-        NextNode();
+                return;
+            case "lostPlayer":
+                agent.destination = lastPosition.transform.position;
+                if(!agent.pathPending && agent.remainingDistance < 0.5f)
+                {
+                    StartCoroutine(Wait());
+                }
+                return;
+
+            case "player":
+                agent.destination = player.transform.position;
+                return;
+
+            default:
+                return;
+        }
+        
     }
 
     int RandomNumber()
