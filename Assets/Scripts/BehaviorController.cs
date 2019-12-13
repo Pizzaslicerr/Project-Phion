@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.AI;
-using System.Collections;
 
 public class BehaviorController : MonoBehaviour
 {
@@ -24,6 +24,9 @@ public class BehaviorController : MonoBehaviour
     private int nodesUntilWait;
     public GameObject player;
     private bool isVisible = false;
+    private int layerMask = 1 << 8;
+    Vector3 playerDirection;
+    public bool nearPlayer;
 
     private int RNG = 1;
 
@@ -31,6 +34,7 @@ public class BehaviorController : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         RNG = RandomNumber();
+        layerMask = ~layerMask;
     }
 
     void Update()
@@ -40,11 +44,51 @@ public class BehaviorController : MonoBehaviour
 
         debugNodesUntilWait = nodesUntilWait + 1;
         debugAgentSpeed = agent.speed;
-
-        Vector3 playerDirection = player.transform.position - transform.position;
         Debug.DrawRay(transform.position, playerDirection, Color.green);
         Debug.DrawRay(lastPosition.transform.position, new Vector3(0, 10, 0.5f), Color.yellow);
-        
+
+        playerDirection = player.transform.position - transform.position;
+        if (agent.destination != points[RNG].position && playerDirection.sqrMagnitude < 2)
+        {
+            nearPlayer = true;
+        }
+        else
+        {
+            nearPlayer = false;
+        }
+
+        if (!nearPlayer)
+        {
+            if (nodesUntilWait < 1)
+            {
+                StartCoroutine(Wait());
+            }
+            else
+            {
+                VisibleCheck();
+
+                if (isVisible)
+                {
+                    CheckIfStillVisible();
+                }
+            }
+        }
+        else
+        {
+            agent.speed = 0;
+
+        /*Choose the next destination point when the agent gets
+          close to the current one.*/
+
+        if (!agent.pathPending && agent.remainingDistance < 0.5f && !nearPlayer)
+        {
+            GoToNextPoint("node");
+        }
+
+    }
+
+    void VisibleCheck()
+    {
         if (playerDirection.sqrMagnitude < 100f && !Physics.Linecast(transform.position, player.transform.position, layerMask))
         {
             lastPosition.transform.position = player.transform.position;
@@ -53,25 +97,19 @@ public class BehaviorController : MonoBehaviour
             GoToNextPoint("player");
             isVisible = true;
         }
+    }
 
-        if (isVisible)
+    void CheckIfStillVisible()
+    {
+        if (playerDirection.sqrMagnitude > 100f || Physics.Linecast(transform.position, player.transform.position, layerMask))
         {
-            if (playerDirection.sqrMagnitude > 100f || Physics.Linecast(transform.position, player.transform.position, layerMask))
+            if (playerDirection.sqrMagnitude > 4)
             {
                 agent.speed = 3.5f;
                 isVisible = false;
                 GoToNextPoint("lostPlayer");
             }
         }
-        
-
-        /*Choose the next destination point when the agent gets
-          close to the current one.*/
-        if (!agent.pathPending && agent.remainingDistance < 0.5f)
-        {
-            GoToNextPoint("node");
-        }
-
     }
 
     void GoToNextPoint(string target)
@@ -86,15 +124,19 @@ public class BehaviorController : MonoBehaviour
                 }
 
                 /*Checks if it's time to stop, then randomly selects next destination.*/
-                if (nodesUntilWait == 0)
+                if (nodesUntilWait < 1)
                 {
-                    
-                }
-                NextNode();
+                    Wait();
+                    if (nodesUntilWait == 0)
+                    {
 
+                    }
+                    NextNode();
+                }
                 return;
             case "lostPlayer":
                 agent.destination = lastPosition.transform.position;
+                if (!agent.pathPending && agent.remainingDistance < 0.5f)
                 if(!agent.pathPending && agent.remainingDistance < 0.5f)
                 {
                     StartCoroutine(Wait());
@@ -107,6 +149,8 @@ public class BehaviorController : MonoBehaviour
 
             default:
                 return;
+        }
+
         }
         
     }
@@ -121,15 +165,17 @@ public class BehaviorController : MonoBehaviour
         RNG = RandomNumber();
         agent.destination = points[RNG].position;
         debugDestination = points[RNG];
-        nodesUntilWait--;
 
-        return;
+        if (points[RNG].CompareTag("Node"))
+        {
+            nodesUntilWait--;
+        }
     }
 
     //Stops AI for a random amount, then sets the amount of nodes to pass until next wait.
     IEnumerator Wait()
     {
-        agent.speed = 0.0f;
+        agent.speed = 0f;
         yield return new WaitForSecondsRealtime(Random.Range(minWait, maxWait));
         agent.speed = 3.5f;
         nodesUntilWait = Random.Range(minNodes, maxNodes);
