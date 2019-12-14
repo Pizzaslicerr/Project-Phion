@@ -17,6 +17,8 @@ public class BehaviorController : MonoBehaviour
     public Transform debugDestination;
     public int debugNodesUntilWait;
     public float debugAgentSpeed;
+    public bool nearPlayer;
+
 
     public Transform[] points;
     public GameObject lastPosition;
@@ -26,7 +28,6 @@ public class BehaviorController : MonoBehaviour
     private bool isVisible = false;
     private int layerMask = 1 << 8;
     Vector3 playerDirection;
-    public bool nearPlayer;
 
     private int RNG = 1;
 
@@ -72,20 +73,18 @@ public class BehaviorController : MonoBehaviour
                     CheckIfStillVisible();
                 }
             }
+
+            /*Choose the next destination point when the agent gets
+          close to the current one.*/
+            if (!agent.pathPending && agent.remainingDistance < 0.5f)
+            {
+                GoToNextPoint("node");
+            }
         }
         else
         {
             agent.speed = 0;
-
-        /*Choose the next destination point when the agent gets
-          close to the current one.*/
-
-        if (!agent.pathPending && agent.remainingDistance < 0.5f && !nearPlayer)
-        {
-            GoToNextPoint("node");
         }
-
-    }
 
     void VisibleCheck()
     {
@@ -103,12 +102,9 @@ public class BehaviorController : MonoBehaviour
     {
         if (playerDirection.sqrMagnitude > 100f || Physics.Linecast(transform.position, player.transform.position, layerMask))
         {
-            if (playerDirection.sqrMagnitude > 4)
-            {
-                agent.speed = 3.5f;
-                isVisible = false;
-                GoToNextPoint("lostPlayer");
-            }
+            agent.speed = 3.5f;
+            isVisible = false;
+            GoToNextPoint("lostPlayer");
         }
     }
 
@@ -127,16 +123,14 @@ public class BehaviorController : MonoBehaviour
                 if (nodesUntilWait < 1)
                 {
                     Wait();
-                    if (nodesUntilWait == 0)
-                    {
-
-                    }
-                    NextNode();
                 }
+                RNG = RandomNumber();
+                NextNode();
+
                 return;
             case "lostPlayer":
                 agent.destination = lastPosition.transform.position;
-                if (!agent.pathPending && agent.remainingDistance < 0.5f)
+
                 if(!agent.pathPending && agent.remainingDistance < 0.5f)
                 {
                     StartCoroutine(Wait());
@@ -162,14 +156,9 @@ public class BehaviorController : MonoBehaviour
 
     void NextNode()
     {
-        RNG = RandomNumber();
         agent.destination = points[RNG].position;
         debugDestination = points[RNG];
-
-        if (points[RNG].CompareTag("Node"))
-        {
-            nodesUntilWait--;
-        }
+        nodesUntilWait--;
     }
 
     //Stops AI for a random amount, then sets the amount of nodes to pass until next wait.
