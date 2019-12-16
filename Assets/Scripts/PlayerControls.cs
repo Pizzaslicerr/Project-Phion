@@ -17,7 +17,6 @@ public class PlayerControls : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        
         navMeshAgent = GetComponent<NavMeshAgent>();
     }
 
@@ -38,7 +37,6 @@ public class PlayerControls : MonoBehaviour
                 }
                 else
                 {
-                    walking = true;
                     enemyClicked = false;
                     navMeshAgent.isStopped = false;
                     navMeshAgent.destination = hit.point;
@@ -49,15 +47,6 @@ public class PlayerControls : MonoBehaviour
         {
             MoveAndAttack();
         }
-        if(navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
-        {
-            walking = false;
-        }
-        else
-        {
-            walking = true;
-        }
-       
     }
 
     void MoveAndAttack()
@@ -70,7 +59,6 @@ public class PlayerControls : MonoBehaviour
         if(navMeshAgent.remainingDistance > attackDistance)
         {
             navMeshAgent.isStopped = false;
-            walking = true;
         }
         else
         {
@@ -82,7 +70,6 @@ public class PlayerControls : MonoBehaviour
                 nextAttack = Time.time + attackRate;
             }
             navMeshAgent.isStopped = true;
-            walking = false;
         }
     }
 }
