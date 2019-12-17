@@ -19,6 +19,10 @@ public class BehaviorController : MonoBehaviour
     public float debugAgentSpeed;
     public bool nearPlayer;
 
+    [Header("Anim")]
+    public GameObject enemySprite;
+    Animator animator;
+    private bool moving;
 
     public Transform[] points;
     public GameObject lastPosition;
@@ -31,6 +35,11 @@ public class BehaviorController : MonoBehaviour
 
     private int RNG = 1;
 
+    void Awake()
+    {
+        animator = enemySprite.GetComponent<Animator>();
+    }
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -40,6 +49,17 @@ public class BehaviorController : MonoBehaviour
 
     void Update()
     {
+        animator.SetBool("isMoving", moving);
+
+        if (agent.velocity.sqrMagnitude > 0.16f)
+        {
+            moving = true;
+        }
+        else
+        {
+            moving = false;
+        }
+
         int layerMask = 1 << 8;
         layerMask = ~layerMask;
 
