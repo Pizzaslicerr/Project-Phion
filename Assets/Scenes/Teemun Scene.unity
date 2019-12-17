@@ -737,8 +737,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 9
   m_Type: 1
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Color: {r: 0.4587921, g: 0.41331434, b: 0.6792453, a: 1}
+  m_Intensity: 0.5
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -952,7 +952,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 371478077240724524, guid: 4cd22a9fdfe84ea44b95ca469e90774d, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.7918142, g: 0.6065326, b: 0.8867924, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1359,8 +1359,8 @@ Camera:
   m_GameObject: {fileID: 963194225}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -2402,6 +2402,21 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 146704036}
+    - target: {fileID: 2432897427099462007, guid: 8c4b51fc76bceba47a791a49643ad988,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 0.7924255
+      objectReference: {fileID: 0}
+    - target: {fileID: 2432897427099462007, guid: 8c4b51fc76bceba47a791a49643ad988,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0.6673193
+      objectReference: {fileID: 0}
+    - target: {fileID: 2432897427099462007, guid: 8c4b51fc76bceba47a791a49643ad988,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0.8679245
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8c4b51fc76bceba47a791a49643ad988, type: 3}
 --- !u!1001 &3215518189706135371
